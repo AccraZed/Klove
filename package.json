@@ -4,7 +4,6 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -14,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "12.21.0"
+    "node": "12.21.1"
   },
   "bugs": {
     "url": "https://github.com/AccraZed/Klove/issues"
