@@ -14,10 +14,6 @@ app.get("/", function (req, res) {
     res.render("home");
 });
 
-app.get("/prefrences", function (req, res) {
-    res.render("prefrences");
-});
-
 let port = process.env.PORT;
 if (port == null || port == "")
   port = 8000;
