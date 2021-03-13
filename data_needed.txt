@@ -8,15 +8,15 @@ User Preferences:
 
     Ranged Preferences(1-10, with 1 being 'not at all important', 5 being 'neutral', 10 being 'of extreme importance') we can interpret 1 as: of no weighting
 		Housing Metrics:
-        - Square Footage(dropdown)
-        - Age of Home/Year Built(New construction?)
+        	- Square Footage(dropdown)
+        	- Age of Home/Year Built(New construction?)
 		- Estimated Monthly Cost(dropdown)
 		- Lot Size(dropdown with ranges?)
 		
 		Structural:
 		- Roof Style(dropdown with types)
-        - Pool
-        - Fenced
+        	- Pool
+        	- Fenced
 		- Foundation Style(dropdown with types)
 		- Heating/Cooling System(dropdown with types)
 		- Sewer vs Septic
@@ -25,7 +25,7 @@ User Preferences:
 		- Walk/Transit/Bike Scores
 		- School District Rating
 		
-	Additional data to display but not use in factoring Value
+		Additional data to display but not use in factoring Value
 		- Cost Relative to Nearby Homes(ZipCode limited)
 		- Insurance Claims made against house???
 		
