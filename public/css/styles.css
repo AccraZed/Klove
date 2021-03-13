@@ -28,7 +28,7 @@ p {
 /* Containers */
 
 .container-fluid{
-  padding: 7% 15%;
+  padding: 7% 0%;
 }
 
 /* Sections */
@@ -81,7 +81,7 @@ p {
 }
 
 #title .container-fluid {
-  padding: 3% 15% 7%;
+  padding: 3% 6% 6%;
 }
 
 /* Title Image */
@@ -90,7 +90,7 @@ p {
   width: 40%;
   position: absolute;
   right: 0%;
-  top: 10%;
+  top: 20%;
 }
 
 /* Features Section */
