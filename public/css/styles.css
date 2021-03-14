@@ -75,6 +75,10 @@ p {
     margin-top: 5em;
 }
 
+.search-section {
+  margin-bottom: 6em;
+}
+
 /* Buttons */
 
 .download-button {
@@ -89,16 +93,8 @@ p {
 }
 
 #title .container-fluid {
-<<<<<<< HEAD
   padding: 3% 6% 6%;
-=======
-  padding: 3% 15% 7%;
-<<<<<<< HEAD
-  height: 50em;
-=======
-  height: 45em;
->>>>>>> 919f038c835df7c47b1f1b4d5883123d1b8421bd
->>>>>>> 611df2fb9560f07722f8896d63266c971cb9785a
+
 }
 
 /* Title Image */
