@@ -1,12 +1,11 @@
 from haversine import haversine, Unit
 import urllib
-import requests
+import aiohttp
+import asyncio
 import json
-
+import sqlite3
 
 class Property:
-    score = None
-
     def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost):
         self.address = address
         self.square_footage = square_footage
@@ -16,9 +15,7 @@ class Property:
         self.year_created = year_created
         self.estimated_monthly_cost = estimated_monthly_cost
         self.price = price
-
-    def update_score(self):
-        self.score = ApiClient.get_score(self)
+        self.score = None
 
     def distance_from(self, other):
         """Returns the distance from the current Property and the other Property, or `None` if
@@ -30,13 +27,13 @@ class Property:
 
 
 class Address:
-    def __init__(self, address_line, city, state, zip_code, lon, lat):
+    def __init__(self, address_line, city, state, zip_code, lat, lon):
         self.address_line = address_line
         self.city = city
         self.state = state
         self.zip_code = zip_code
-        self.lon = lon
         self.lat = lat
+        self.lon = lon
 
     def has_valid_coordinates(self):
         return self.lon != None and self.latitude != None
@@ -56,35 +53,31 @@ class Score:
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
 
-    def __init__(self, k_zillow="UNSET", k_walk_score="UNSET"):
-        self.k_zillow = k_zillow
+    def __init__(self, client, k_walk_score="UNSET"):
         self.k_walk_score = k_walk_score
+        self.client = client
 
-    async def get_score(self, p: Property):
+    async def get_score(self, a: Address):
         """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
 
-        Returns:
+        Returns a `Score` object
 
-            dict{
-                walk {score, description},
-                bike {score, description}, 
-                transit {score, description, summary}
-                }
-
-        Or a status code (available at https://www.walkscore.com/professional/api.php) if an error occured
+        Or a `None` if an error occured
         """
-        query = base_url_walk_score + urllib.urlencode({'format': 'json', 'transit': 1, 'bike': 1, 'wsapikey': self.k_walk_score, 'lat': p.address.lat, 'lon': p.address.lon,
-                                                        'address': "{} {} {} {}".format(p.address.address_line, p.address.city, p.address.state, p.address.zip_code)})
+        query = ApiClient.base_url_walk_score + urllib.parse.urlencode({'format': 'json', 'transit': 1, 'bike': 1, 'wsapikey': self.k_walk_score, 'lat': a.lat, 'lon': a.lon,
+                                                                        'address': "{} {} {} {}".format(a.address_line, a.city, a.state, a.zip_code)})
 
-        result = await requests.get(query)
+        result = await self.client.get(query)
+        try:
+            result = json.loads(result.content._buffer[0])
 
-        if result['status'] != 1:
-            return result['status']
+            return Score(result['walkscore'],
+                         result['description'],
+                         result['bike']['score'],
+                         result['bike']['description'],
+                         result['transit']['score'],
+                         result['transit']['description'],
+                         result['transit']['summary'])
+        except Exception as e:
+            print(e)
 
-        return Score(result['walkscore'],
-                     result['description'],
-                     result['bike']['score'],
-                     result['bike']['description'],
-                     result['transit']['score'],
-                     result['transit']['description'],
-                     result['transit']['summary'])
