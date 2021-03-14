@@ -27,7 +27,6 @@ class Property:
         
         return haversine((self.address.latitude, self.address.longitude), (other.address.latitude, other.address.longitude), unit=Unit.MILES)
 
-
 class Address:
     def __init__(self, address_line, city, state, zip_code, lat, lon):
         self.address_line = address_line
@@ -40,33 +39,6 @@ class Address:
     def has_valid_coordinates(self):
         return self.lon != None and self.lat != None
 
-"""
-
-
-
-API_KEY = 'AIzaSyAxHyjC0qy7dseYGnT8RpjGqV6UvwvUMhw'
-
-
-
-address = '1600 Amphitheatre Parkway, Mountain View, CA'
-
-params = {
-    'key': API_KEY,
-    'address': address
-}
-
-base_url = 'https://maps.googleapis.com/maps/api/geocode/json?'
-response = requests.get(base_url, params=params).json()
-response.keys()
-
-if response['status'] == 'OK':
-    geometry = response['results'][0]['geometry']
-    lat = geometry['location']['lat']
-    lon = geometry['location']['lng']
-
-print(lat, lon)
-    
-"""
 class Score:
     def __init__(self, walk_score, walk_desc, bike_score, bike_desc, transit_score, transit_desc, transit_summary):
         self.walk_score = walk_score
@@ -147,8 +119,4 @@ class ApiClient:
         self.cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", a_num, a_zip, a_city)
         return self.cur.fetchone()
 
-
-import env
-
-env.KEY_GOOGLE_GEO
 
