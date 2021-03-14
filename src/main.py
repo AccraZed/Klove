@@ -10,12 +10,14 @@ client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 # We need to link the FrontEnd input to this constructor
 user_property = Property('1234 Main St.', 1500, 2, 2, 1965, 130000, 140000)
 
-print("Test")
-
 # returns dict-like string of 5 properties and float of 5-value closing price avg
 similar_properties = client.get_most_similar(user_property)
+print(similar_properties)
+# Writes json to file for frontend
+with open('similar_properties.json', 'w') as f:
+    json.dump(similar_properties, f, ensure_ascii=False, indent=4)
+
 json_to_dict = json.loads(similar_properties)
-print(json_to_dict)
 average_close_price = client.get_average_close_price(json_to_dict)
 print(average_close_price)
 
@@ -41,4 +43,7 @@ else:
 # Inherent biases exists in our data pool because we are 
 #     narrowly selecting a range of data against which we
 #     compare listing price. Additionally, by using LIMIT,
-#     we are choosing
+#     we are choosing from a heavily-skewed small range.
+#     We can raise the LIMIT in the get_most_similar() function
+#     to increase our sample pool we use for averaging
+# (JS)

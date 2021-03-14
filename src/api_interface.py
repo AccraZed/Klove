@@ -65,7 +65,6 @@ class ApiClient:
         self.client_http = aiohttp.ClientSession() # close this
         self.db_con = sqlite3.connect(db_path)
         self.db_cur = self.db_con.cursor()
-        self.db_con.row_factory = sqlite3.Row
 
     # if the current property has no geo coordinates, call the google api to find them and update
     async def update_property_coords(self, property):
@@ -168,25 +167,27 @@ class ApiClient:
         AND num_bathrooms = ?
         AND ABS(? - close_price) < (? * 0.1))
         ORDER BY id ASC
-        LIMIT 5
+        LIMIT 10
         """
 
-        # Yields list of top 5 most similar properties
+        # Yields list of top most similar properties
         sim_params = [p.bedrooms, p.bathrooms, p.list_price, p.list_price]
         sim_results = db_handler.execute_read_query(self.db_con, sim_query, sim_params)
         json_output = json.dumps(sim_results)
-        print(json_output)
 
         return json_output
     
     # Simplified, mechanical averaging of dict values
-    def get_average_close_price(self, dict):
+    def get_average_close_price(self, dataList):
         number_of_entries = 0
         sum = 0
-        for key, value in dict.items():
-            if key == 'close_price':
-                sum += dict['close_price']
-                number_of_entries += 1
+    
+        for dict in dataList:
+            for key in dict:
+                if key == 'close_price':
+                    sum += dict['close_price']
+                    number_of_entries += 1
+
         avg = sum / float(number_of_entries)
 
         return avg
