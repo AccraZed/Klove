@@ -76,6 +76,10 @@ p {
     margin-top: 5em;
 }
 
+.search-section {
+  margin-bottom: 6em;
+}
+
 /* Buttons */
 
 .download-button {
@@ -91,7 +95,6 @@ p {
 
 #title .container-fluid {
   padding: 3% 6% 6%;
-  height: 50em;
 }
 
 /* Title Image */
