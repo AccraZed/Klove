@@ -2,51 +2,6 @@
 <div class="report">
   <div class="card house-image">
     <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-    </div>
-    <img class="card-img-bottom" src="images/housephoto.jpeg" alt="Card image cap">
-  </div>
-
-
-  <div class="card report-card">
-    <div class="card-header report-card-header">
-      Report Card
-    </div>
-    <div class="card-body report-card-body">
-      <table class="report-table">
-        <tbody>
-          <tr>
-            <td>Price</td>
-            <td>Nearby School Rating</td>
-          </tr>
-          <tr>
-            <td><%= property.price %></td>
-            <td><%= property.school %></td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="report-table">
-        <tbody>
-          <tr>
-            <td>Walk Score</td>
-            <td>Bike Score</td>
-            <td>Transit Score</td>
-          </tr>
-          <tr>
-            <td><%= property.walk_score %></td>
-            <td><%= property.bike_score %></td>
-            <td><%= property.transit_score %></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-<%- include("header") -%>
-<div class="report">
-  <div class="card house-image">
-    <div class="card-body">
       <h5 class="card-title"><%= property.address %></h5>
       <p class="card-text">Here is the image we found for your house selection</p>
     </div>
