@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
 const { property } = require("lodash");
+const { spawn } = require("child_process");
 
 const app = express();
 
@@ -25,11 +26,16 @@ app.get("/", function (req, res) {
 // search button 
 app.post("/search", function (req, res) {
   const search = req.body.search;
-  console.log(search);
   res.redirect("/report");
 });
 
 app.get("/report", function (req, res) {
+  const python = spawn('python', ['src/main.py']);
+  //console.log(python);
+  python.stdout.on('data', function (data) {
+    console.log("test " + data.toString());
+  });
+
   var property = {
     address: "1234 example st",
     price: "$100 000 000",
