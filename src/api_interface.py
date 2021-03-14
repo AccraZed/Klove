@@ -5,6 +5,7 @@ import asyncio
 import json
 import sqlite3
 import googlemaps
+import db_handler
 
 class Property:
     def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost):
@@ -126,7 +127,7 @@ class ApiClient:
             return p.id
 
         # TODO: UPDATE THIS EXECUTE WITH THE SUPPORTED COMMAND FROM db_handler.py
-        self.db_cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", a_num, a_zip, a_city)
+        self.db_cur.execute("SELECT TOP 1 [id] FROM Property WHERE [street_number]=? AND [zip_code]=? AND [city]=?", a_num, a_zip, a_city)
         return self.db_cur.fetchone()
 
 
