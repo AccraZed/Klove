@@ -123,16 +123,17 @@ p {
 }
 
 #title .container-fluid {
-  padding: 3% 6% 6%;
+  padding: 10% 0 15% 6%
 }
 
 /* Title Image */
 
 .title-image {
   width: 100%;
+  display: block;
   position: absolute;
   right: 0%;
-  top: 20%;
+  top: -30%;
 }
 
 /* Features Section */
