@@ -1,5 +1,6 @@
 from haversine import haversine, Unit
 from statistics import mean
+import ast
 import urllib
 import aiohttp
 import asyncio
@@ -61,7 +62,7 @@ class ApiClient:
     def __init__(self, db_path="db.sqlite", k_walk_score="UNSET", k_google="UNSET"):
         self.k_walk_score = k_walk_score
         self.k_google = k_google
-        self.client_http = aiohttp.ClientSession()
+        self.client_http = aiohttp.ClientSession() # close this
         self.db_con = sqlite3.connect(db_path)
         self.db_cur = self.db_con.cursor()
         self.db_con.row_factory = sqlite3.Row
@@ -153,7 +154,7 @@ class ApiClient:
         LIMIT 1 
         """
 
-        params = [p.a_num, p.a_zip, p.a_city]
+        params = [p.street_number, p.street_name, p.city, p.zip_code]
         self.db_handler.execute_read_query(self.db_con, query, params)
 
         return self.db_cur.fetchone()
@@ -169,17 +170,23 @@ class ApiClient:
         ORDER BY id ASC
         LIMIT 5
         """
-        avg_query = """
-        SELECT AVG(close_price)
-        FROM ?
-        """
 
         # Yields list of top 5 most similar properties
         sim_params = [p.bedrooms, p.bathrooms, p.list_price, p.list_price]
         sim_results = db_handler.execute_read_query(self.db_con, sim_query, sim_params)
+        json_output = json.dumps(sim_results)
+        print(json_output)
 
-        # Yields the average closing price of those 5 properties
-        avg_params = [sim_results]
-        avg_results = db_handler.execute_read_query(self.db_con, avg_query, avg_params)
+        return json_output
+    
+    # Simplified, mechanical averaging of dict values
+    def get_average_close_price(self, dict):
+        number_of_entries = 0
+        sum = 0
+        for key, value in dict.items():
+            if key == 'close_price':
+                sum += dict['close_price']
+                number_of_entries += 1
+        avg = sum / float(number_of_entries)
 
-        return sim_results, avg_results
+        return avg

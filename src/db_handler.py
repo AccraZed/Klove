@@ -44,8 +44,9 @@ def execute_read_query(connection, query):
     result = None
     try:
         cursor.execute(query)
-        result = cursor.fetchall()
-        return result
+        result = [dict((cursor.description[i][0], value) \
+            for i, value in enumerate(row)) for row in cursor.fetchall()]
+        return (result[0] if result else None)
     except Error as e:
         print(f"The error '{e}' occurred")
 
@@ -56,7 +57,8 @@ def execute_read_query(connection, query, params):
     result = None
     try:
         cursor.execute(query, params)
-        result = cursor.fetchall()
-        return result
+        result = [dict((cursor.description[i][0], value) \
+            for i, value in enumerate(row)) for row in cursor.fetchall()]
+        return (result[0] if result else None)
     except Error as e:
         print(f"The error '{e}' occurred")

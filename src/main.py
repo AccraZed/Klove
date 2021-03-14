@@ -12,15 +12,33 @@ user_property = Property('1234 Main St.', 1500, 2, 2, 1965, 130000, 140000)
 
 print("Test")
 
-# returns dict of 5 properties and float of 5-value closing price avg
-similar_properties, average_sell_price = client.get_most_similar(user_property)
+# returns dict-like string of 5 properties and float of 5-value closing price avg
+similar_properties = client.get_most_similar(user_property)
+json_to_dict = json.loads(similar_properties)
+print(json_to_dict)
+average_close_price = client.get_average_close_price(json_to_dict)
+print(average_close_price)
 
-# This is the packet going to the front end for arrangement
-to_frontend = json.dumps(similar_properties)
 
 # The moneyshot
-if int(user_property.list_price) < average_sell_price:
+if user_property.list_price < average_close_price:
     print("Undervalued")
 else:
     print("Overvalued")
 
+
+
+# Not using get_id to locate and handle user selection
+# Both printing statements(ln13 of main.py(LIST) and ln182 of 
+#     api_interface.py(DICT)) are not printing any values
+# Further abstraction is possible an might improve clarity
+# The mechanisms for receipt and transfer of property information
+#     are in place and only need genuine 'connections' from both
+#     ends.
+# I believe that the 'avg_query' syntax is wrong. The intent is 
+#     to average the close_price values listed in the subset 
+#     in sim_results(5-properties)
+# Inherent biases exists in our data pool because we are 
+#     narrowly selecting a range of data against which we
+#     compare listing price. Additionally, by using LIMIT,
+#     we are choosing
