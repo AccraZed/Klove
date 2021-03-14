@@ -96,6 +96,6 @@ class ApiClient:
     def get_id(self, p: Property):
         if p.id != None:
             return p.id
-        self.cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip8 Code]=? AND [City]=?", a_num, a_zip, a_city)
+        self.cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", a_num, a_zip, a_city)
         return self.cur.fetchone()
 
