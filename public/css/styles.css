@@ -11,6 +11,14 @@ p {
   color: #8f8f8f;
 }
 
+.house-image {
+  left: 5%;
+  float: left;
+  margin-top: 10em;
+  width: 40%;
+  margin: auto;
+}
+
 /* Headings */
 
 .big-heading {
@@ -20,7 +28,15 @@ p {
 }
 
 .report-card {
-  width: 30%;
+  right: 5%;
+  float: right;
+  width: 40%;
+  height: 40%;
+  margin: auto;
+}
+
+.report-card-body {
+  text-align: left;
 }
 
 .section-heading {
@@ -75,7 +91,7 @@ p {
   position: relative;
   font-size: 1.2rem;
   font-family: "Montserrat-Light";
-  color: #FECC1D;
+  /* color: #FECC1D !important; */
   bottom: 40px;
 }
 
@@ -107,16 +123,17 @@ p {
 }
 
 #title .container-fluid {
-  padding: 3% 6% 6%;
+  padding: 10% 0 15% 6%
 }
 
 /* Title Image */
 
 .title-image {
-  width: 40%;
+  width: 100%;
+  display: block;
   position: absolute;
   right: 0%;
-  top: 20%;
+  top: -30%;
 }
 
 /* Features Section */
@@ -136,10 +153,6 @@ p {
 .icon {
   color: #5A54F2;
   margin-bottom: 1rem;
-}
-
-.icon:hover {
-  color: #FECC1D;
 }
 
 /* Testimonial Section */
@@ -180,9 +193,10 @@ p {
   line-height: 1.5;
 }
 
-.pricing-image {
+.couple-image {
+  border: none;
   width: 60%;
-  margin: 90px, 90px, 90px;
+  margin: auto;
 }
 
 .pricing-column {
