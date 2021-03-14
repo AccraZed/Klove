@@ -4,10 +4,10 @@ import aiohttp
 import asyncio
 import json
 import sqlite3
+import googlemaps
 
 class Property:
-    def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost, id=None):
-        self.id = id
+    def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost):
         self.address = address
         self.square_footage = square_footage
         self.lot_size = lot_size
@@ -22,23 +22,22 @@ class Property:
         """Returns the distance from the current Property and the other Property, or `None` if
 
         """
-        if self.address.has_valid_coordinates() and other.address.has_valid_coordinates():
+        if not self.address.has_valid_coordinates() and not other.address.has_valid_coordinates():
             return None
+        
         return haversine((self.address.latitude, self.address.longitude), (other.address.latitude, other.address.longitude), unit=Unit.MILES)
-
 
 class Address:
     def __init__(self, address_line, city, state, zip_code, lat, lon):
-        self.address_line: str = address_line
-        self.city: str = city
-        self.state: str = state
-        self.zip_code: int = zip_code
+        self.address_line = address_line
+        self.city = city
+        self.state = state
+        self.zip_code = zip_code
         self.lat = lat
         self.lon = lon
 
     def has_valid_coordinates(self):
-        return self.lon != None and self.latitude != None
-
+        return self.lon != None and self.lat != None
 
 class Score:
     def __init__(self, walk_score, walk_desc, bike_score, bike_desc, transit_score, transit_desc, transit_summary):
@@ -50,25 +49,46 @@ class Score:
         self.transit_desc = transit_desc
         self.transit_summary = transit_summary
 
-
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
-
-    def __init__(self, client, k_walk_score="UNSET", database="db.sqlite",):
+    base_url_google_geocode = 'https://maps.googleapis.com/maps/api/geocode/json?'
+    
+    def __init__(self, client_db, k_walk_score="UNSET", k_google="UNSET"):
         self.k_walk_score = k_walk_score
-        self.client = client
-        self.conn = sqlite3.connect(database)
-        self.cur = sqlite3.Cursor()
+        self.k_google = k_google
+        self.client_http = aiohttp.ClientSession()
+        self.client_db = client_db
+
+    async def update_property_coords(self, property):
+        if property.address.lat == None or property.address.lon == None:
+            property.address.lat, property.address.lon = self.get_geo_coord(property.address)
+
+    async def get_geo_coord(self, address):
+        params = {
+            'key': self.k_google,
+            'address': "{} {} {} {}".format(address.address_line, address.city, address.state, address.zip_code)
+        }
+        
+        response = await self.client_http.get(ApiClient.base_url_google_geocode, params=params)
+        data = response.json() 
+
+        if data['status'] == 'OK':
+            result = data['results'][0]
+            location = result['geometry']['location']
+            return (location['lat'], location['lng'])
+        else:
+            return (None, None)
 
     async def update_property_score(self, p: Property):
-        address = p.address.address_line.split()
-        score: Score = await get_score(p.address)
-        a_num = (address.pop(0),)
-        a_zip = (p.address.zip_code,)
-        a_city = (p.address.city,)
-        cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip, a_city)
-        p.score = score
-
+        if p.score != None:
+            address = p.address.address_line.split()
+            score: Score = await get_score(p.address)
+            a_num = (address.pop(0),)
+            a_zip = (p.address.zip_code,)
+            a_city = (p.address.city,)
+            cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip, a_city)
+            p.score = score
+        
     async def get_score(self, a: Address):
         """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
 
@@ -76,10 +96,10 @@ class ApiClient:
 
         Or a `None` if an error occured
         """
-        query = ApiClient.base_url_walk_score + urllib.parse.urlencode({'format': 'json', 'transit': 1, 'bike': 1, 'wsapikey': self.k_walk_score, 'lat': a.lat, 'lon': a.lon,
-                                                                        'address': "{} {} {} {}".format(a.address_line, a.city, a.state, a.zip_code)})
+        params = {'format': 'json', 'transit': '1', 'bike': '1', 'wsapikey': self.k_walk_score, 'lat': a.lat, 'lon': a.lon,'address': "{} {} {} {}".format(a.address_line, a.city, a.state, a.zip_code)}
+        query = ApiClient.base_url_walk_score
 
-        result = await self.client.get(query)
+        result = await self.client_http.get(query, params=params)
         try:
             result = json.loads(result.content._buffer[0])
 
@@ -92,10 +112,11 @@ class ApiClient:
                          result['transit']['summary'])
         except Exception as e:
             print(e)
-    
+
     def get_id(self, p: Property):
         if p.id != None:
             return p.id
         self.cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", a_num, a_zip, a_city)
         return self.cur.fetchone()
+
 
