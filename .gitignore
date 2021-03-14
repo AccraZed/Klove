@@ -2,3 +2,4 @@ src/backend/.env
 src/.env
 test.html
 db.sqlite
+src/env.py

@@ -54,11 +54,13 @@ class Score:
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
 
-    def __init__(self, client, k_walk_score="UNSET", database="db.sqlite",):
+    def __init__(self, client, k_google_maps="UNSET", k_walk_score="UNSET", database="db.sqlite",):
         self.k_walk_score = k_walk_score
+        self.k_google_maps = k_google_maps
         self.client = client
         self.conn = sqlite3.connect(database)
         self.cur = sqlite3.Cursor()
+        self.client_google
 
     async def update_property_score(self, p: Property):
         address = p.address.address_line.split()
