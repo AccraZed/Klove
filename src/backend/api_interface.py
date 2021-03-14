@@ -6,7 +6,8 @@ import json
 import sqlite3
 
 class Property:
-    def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost):
+    def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost, id=None):
+        self.id = id
         self.address = address
         self.square_footage = square_footage
         self.lot_size = lot_size
@@ -64,9 +65,9 @@ class ApiClient:
         score: Score = await get_score(p.address)
         a_num = (address.pop(0),)
         a_zip = (p.address.zip_code,)
-        cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [Street Name]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip)
+        a_city = (p.address.city,)
+        cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip, a_city)
         p.score = score
-
 
     async def get_score(self, a: Address):
         """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
@@ -91,4 +92,10 @@ class ApiClient:
                          result['transit']['summary'])
         except Exception as e:
             print(e)
+    
+    def get_id(self, p: Property):
+        if p.id != None:
+            return p.id
+        self.cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip8 Code]=? AND [City]=?", a_num, a_zip, a_city)
+        return self.cur.fetchone()
 
