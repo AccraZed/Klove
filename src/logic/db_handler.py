@@ -1,7 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 
-#
+
+#Creates connection
 def create_connection(path):
     connection = None
     try:
@@ -13,6 +14,8 @@ def create_connection(path):
     return connection
 
 
+# Write Functions
+
 # This function is for executing permanent changes to the DB, NOT retrieving data
 def execute_query(connection, query):
     cursor = connection.cursor()
@@ -23,7 +26,19 @@ def execute_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-# This function is used for retrieving data from the DB
+# This function is for executing permanent changes to the DB, NOT retrieving data
+def execute_query(connection, query, params):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, params)
+        connection.commit() # THIS LINE CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
+    except Error as e:
+        print(f"The error '{e}' occurred")
+
+
+# Read Functions:
+
+# This function is used for retrieving data from the DB with simple query
 def execute_read_query(connection, query):
     cursor = connection.cursor()
     result = None
@@ -35,21 +50,13 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-
-# creating the connection 
-connection = create_connection("db.sqlite")
-num_beds = 2
-num_br = 2
-list_price = 130000
-
-q = """
-SELECT * from property
-WHERE (num_bedrooms = ?
-AND num_bathrooms = ?
-AND ABS(list_price - close_price) < (list_price * 0.2))
-"""
-data_points = execute_read_query(connection, q)
-for data_pt in data_points:
-    print(data_pt)
-
-connection.close()
+# This function is used for retrieving data from the DB with parametrized query set
+def execute_read_query(connection, query, params):
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query, params)
+        result = cursor.fetchall()
+        return result
+    except Error as e:
+        print(f"The error '{e}' occurred")
