@@ -25,7 +25,7 @@ class Property:
         if not self.address.has_valid_coordinates() and not other.address.has_valid_coordinates():
             return None
         
-        return haversine((self.address.latitude, self.address.longitude), (other.address.latitude, other.address.longitude), unit=Unit.MILES)
+        return haversine((self.address.lat, self.address.lon), (other.address.lat, other.address.lon), unit=Unit.MILES)
 
 class Address:
     def __init__(self, address_line, city, state, zip_code, lat, lon):
