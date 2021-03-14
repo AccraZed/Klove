@@ -155,10 +155,6 @@ p {
   margin-bottom: 1rem;
 }
 
-.icon:hover {
-  color: #FECC1D;
-}
-
 /* Testimonial Section */
 
 .testimonial-text {
@@ -197,9 +193,9 @@ p {
   line-height: 1.5;
 }
 
-.pricing-image {
+.couple-image {
   width: 60%;
-  margin: 90px, 90px, 90px;
+  margin: auto;
 }
 
 .pricing-column {
