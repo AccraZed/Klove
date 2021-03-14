@@ -28,10 +28,10 @@ class Property:
 
 class Address:
     def __init__(self, address_line, city, state, zip_code, lat, lon):
-        self.address_line = address_line
-        self.city = city
-        self.state = state
-        self.zip_code = zip_code
+        self.address_line: str = address_line
+        self.city: str = city
+        self.state: str = state
+        self.zip_code: int = zip_code
         self.lat = lat
         self.lon = lon
 
@@ -53,9 +53,20 @@ class Score:
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
 
-    def __init__(self, client, k_walk_score="UNSET"):
+    def __init__(self, client, k_walk_score="UNSET", database="db.sqlite",):
         self.k_walk_score = k_walk_score
         self.client = client
+        self.conn = sqlite3.connect(database)
+        self.cur = sqlite3.Cursor()
+
+    async def update_property_score(self, p: Property):
+        address = p.address.address_line.split()
+        score: Score = await get_score(p.address)
+        a_num = (address.pop(0),)
+        a_zip = (p.address.zip_code,)
+        cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [Street Name]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip)
+        p.score = score
+
 
     async def get_score(self, a: Address):
         """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
