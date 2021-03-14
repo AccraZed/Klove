@@ -53,16 +53,19 @@ class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
     base_url_google_geocode = 'https://maps.googleapis.com/maps/api/geocode/json?'
     
-    def __init__(self, client_db, k_walk_score="UNSET", k_google="UNSET"):
+    def __init__(self, db_path="db.sqlite", k_walk_score="UNSET", k_google="UNSET"):
         self.k_walk_score = k_walk_score
         self.k_google = k_google
         self.client_http = aiohttp.ClientSession()
-        self.client_db = client_db
+        self.db_con = sqlite3.connect(db_path)
+        self.db_cur = self.db_con.cursor()
 
+    # if the current property has no geo coordinates, call the google api to find them and update
     async def update_property_coords(self, property):
         if property.address.lat == None or property.address.lon == None:
             property.address.lat, property.address.lon = self.get_geo_coord(property.address)
 
+    # return the latitude and longitude of the given address
     async def get_geo_coord(self, address):
         params = {
             'key': self.k_google,
@@ -79,6 +82,7 @@ class ApiClient:
         else:
             return (None, None)
 
+    # request the walk score of the current property and update the database
     async def update_property_score(self, p: Property):
         if p.score != None:
             address = p.address.address_line.split()
@@ -86,9 +90,12 @@ class ApiClient:
             a_num = (address.pop(0),)
             a_zip = (p.address.zip_code,)
             a_city = (p.address.city,)
-            cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip, a_city)
+
+            # TODO: UPDATE THIS EXECUTE WITH THE SUPPORTED COMMAND FROM db_handler.py
+            db_cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip, a_city)
             p.score = score
-        
+    
+    # requests the walk score of the current address and gets rid of the excess space
     async def get_score(self, a: Address):
         """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
 
@@ -113,10 +120,13 @@ class ApiClient:
         except Exception as e:
             print(e)
 
+    # get the ID of the current property
     def get_id(self, p: Property):
         if p.id != None:
             return p.id
-        self.cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", a_num, a_zip, a_city)
-        return self.cur.fetchone()
+
+        # TODO: UPDATE THIS EXECUTE WITH THE SUPPORTED COMMAND FROM db_handler.py
+        self.db_cur.execute("SELECT TOP 1 [Listing Number] FROM Property WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", a_num, a_zip, a_city)
+        return self.db_cur.fetchone()
 
 
