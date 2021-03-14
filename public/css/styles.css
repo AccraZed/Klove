@@ -29,6 +29,15 @@ p {
 .house-image p {
   color: #FFF;
 }
+
+.similar-houses {
+  margin: 1em;
+}
+
+.property-container {
+  width: 100%;
+}
+
 /* Headings */
 
 .big-heading {
