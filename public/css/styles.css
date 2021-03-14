@@ -16,8 +16,8 @@ p {
 
 .big-heading {
   font-family: "Montserrat-Black";
-  font-size: 3.5rem;
-  line-height: 1.5;
+  font-size: 3.2rem;
+  line-height: 1;
 }
 
 .section-heading {
@@ -28,7 +28,7 @@ p {
 /* Containers */
 
 .container-fluid{
-  padding: 7% 15%;
+  padding: 7% 0%;
 }
 
 /* Sections */
@@ -43,6 +43,14 @@ p {
 }
 
 /* Navigation Bar */
+
+.logo-image{
+  width: 100px;
+  height: 38px;
+  border-radius: 10%;
+  overflow: hidden;
+  margin-top: 25px;
+}
 
 .navbar {
   padding: 0 0 4.5rem;
@@ -81,8 +89,16 @@ p {
 }
 
 #title .container-fluid {
+<<<<<<< HEAD
+  padding: 3% 6% 6%;
+=======
   padding: 3% 15% 7%;
+<<<<<<< HEAD
   height: 50em;
+=======
+  height: 45em;
+>>>>>>> 919f038c835df7c47b1f1b4d5883123d1b8421bd
+>>>>>>> 611df2fb9560f07722f8896d63266c971cb9785a
 }
 
 /* Title Image */
@@ -91,7 +107,7 @@ p {
   width: 40%;
   position: absolute;
   right: 0%;
-  top: 10%;
+  top: 20%;
 }
 
 /* Features Section */
@@ -114,7 +130,7 @@ p {
 }
 
 .icon:hover {
-  color: #ff4c68;
+  color: #FECC1D;
 }
 
 /* Testimonial Section */
