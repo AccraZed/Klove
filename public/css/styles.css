@@ -16,8 +16,8 @@ p {
 
 .big-heading {
   font-family: "Montserrat-Black";
-  font-size: 3.5rem;
-  line-height: 1.5;
+  font-size: 3.2rem;
+  line-height: 1;
 }
 
 .section-heading {
@@ -43,6 +43,14 @@ p {
 }
 
 /* Navigation Bar */
+
+.logo-image{
+  width: 100px;
+  height: 38px;
+  border-radius: 10%;
+  overflow: hidden;
+  margin-top: 25px;
+}
 
 .navbar {
   padding: 0 0 4.5rem;
@@ -113,7 +121,7 @@ p {
 }
 
 .icon:hover {
-  color: #ff4c68;
+  color: #FECC1D;
 }
 
 /* Testimonial Section */
