@@ -19,12 +19,16 @@ p {
 }
 
 .house-image {
-  left: 5%;
-  float: left;
-  width: 40%;
-  margin: 5em auto;
+  border-radius: 10%;
+  color: #FFF;
+  background: var(--purple);
+  margin: auto;
+  width: 90%;
+  overflow: hidden;
 }
-
+.house-image p {
+  color: #FFF;
+}
 /* Headings */
 
 .big-heading {
@@ -33,19 +37,48 @@ p {
   line-height: 1;
 }
 
-.report-card {
-  position: relative;
-  right: 5%;
-  float: right;
-  width: 40%;
-  height: 100%;
-  margin: 5em auto;
+.report {
+  width: 100%;
+  padding-top: 5em;
 }
 
+.report-card {
+  border-radius: 3%/5%;
+  color: #FFF;
+  background: var(--purple);
+  position: relative;
+  margin: auto;
+  margin-top: 3em;
+  width: 90%;
+}
+.report-card p {
+  border-radius: 10%;
+  overflow: hidden;
+  color: var(--purple);
+}
+
+.card-title,
+.card-header {
+  font-size: 1.5em;
+}
 .report-card-body {
   text-align: left;
 }
 
+.report-table {
+  background: #FFF;
+  width: 100%;
+  margin-top: 1em;
+}
+.report-table td {
+  color: var(--purple);
+  text-align: center;
+  line-height: 3em;
+  padding-bottom: 0;
+}
+.report-table tr:first-child {
+  border-bottom: 1px solid #8f8f8f;
+}
 .section-heading {
   font-size: 3rem;
   line-height: 1.5;

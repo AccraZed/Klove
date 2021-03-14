@@ -32,11 +32,12 @@ app.post("/search", function (req, res) {
 app.get("/report", function (req, res) {
   var property = {
     address: "1234 example st",
-    price: "price",
-    school: 1,
+    price: "$100 000 000",
+    school: "A-",
     crime: 1,
-    example: "test",
-    example2: "test2"
+    walk_score: 90,
+    bike_score: 94,
+    transit_score: 80,
   }
   res.render("report", { property: property});
 });
