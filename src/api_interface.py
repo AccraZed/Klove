@@ -60,7 +60,7 @@ class ApiClient:
         self.client_db = client_db
 
     async def update_property_coords(self, property):
-        if property.address.lat == None or property.address.lon == None
+        if property.address.lat == None or property.address.lon == None:
             property.address.lat, property.address.lon = self.get_geo_coord(property.address)
 
     async def get_geo_coord(self, address):
@@ -75,12 +75,12 @@ class ApiClient:
         if data['status'] == 'OK':
             result = data['results'][0]
             location = result['geometry']['location']
-            return location['lat'], location['lng']
+            return (location['lat'], location['lng'])
         else:
-            return
+            return (None, None)
 
     async def update_property_score(self, p: Property):
-        if p.score != None
+        if p.score != None:
             address = p.address.address_line.split()
             score: Score = await get_score(p.address)
             a_num = (address.pop(0),)
