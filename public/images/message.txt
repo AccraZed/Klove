@@ -1,0 +1,26 @@
+## Inspiration
+Our inspiration came from personal experiences of buying and picking out the perfect home. While services like Zillow and Realtor already provide an online real estate shopping experience. There's no web application available that can tell you, is this house a good deal?
+
+We believe the real estate research process doesn't have to be so difficult. And it doesn't need a realtor either (whose job is to sell you a house). By automating the research, our customers can save money and feel confident in their purchase. 
+
+## What it does
+Our application asks the user to input a real estate listing and outputs a report card of the listing's stats. 
+It works in the background with a public database of real estate sales and uses that data to determine if the input listing is above or below market value. A large part of this project was managing the data, sorting it by category, and making the search process easier. 
+
+## How we built it
+Prototyping with Figma, Bootstrap, Node.js, ejs, Express.js, for building our website, Heroku for hosting our application. 
+Github and vscode for everything code. 
+
+## Challenges we ran into
+None of us have built an application like this before so we were learning at every step. A big challenge from the initial process was determining what our application could offer within the given time frame. On top of evaluating the housing deal, we wanted the user to be able to find similar listings to add to their search. We had to answer questions like, what does our program offer that makes it stand out from our competitors? 
+
+Another challenge that hindered our process was data scraping. While it would have been extremely useful to pull data from sites like Zillow, we were unable to gain access to these APIs. 
+
+## Accomplishments that we're proud of
+We're extremely proud of how our website looks and our ability to work with a large batch of data to output a result. 
+
+## What we learned
+We learned a lot about real estate and the evaluation behind a listing's price. 
+
+## What's next for klove - rating real estate deals 
+We hope to expand our application to include user preferences. For example, a "good deal" is different for everyone so the more we can customize our application for the user, the more useful our application will be. 

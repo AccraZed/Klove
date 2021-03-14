@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import db_handler
-import env
-from api_interface import ApiClient
-
-client = ApiClient()
-=======
 import db_handler
 import env
 import aiohttp
@@ -76,4 +69,3 @@ client.client_http.close()
 #     We can raise the LIMIT in the get_most_similar() function
 #     to increase our sample pool we use for averaging
 # (JS)
->>>>>>> a5223b4c0ec745585ede84c6ccc861c3e65dc662

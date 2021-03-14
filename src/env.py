@@ -1,6 +1,2 @@
-<<<<<<< HEAD
-KEY_GOOGLE_GEO = 'AIzaSyAa7tDAtxmrVCklE-l47I0jZ3t7hh7tBEw'
-=======
 KEY_GOOGLE_GEO = 'AIzaSyBfC5zmHQfJwlkoecC0OuwTF_WE8UdDBXE'
->>>>>>> a5223b4c0ec745585ede84c6ccc861c3e65dc662
 KEY_WALK_SCORE='8226a2c85d45ac6d13abd490f22f5f69'
