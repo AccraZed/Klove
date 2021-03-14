@@ -69,6 +69,7 @@ p {
 .nav-link {
   font-size: 1.2rem;
   font-family: "Montserrat-Light";
+  color: #FECC1D;
 }
 
 .search-bar {
@@ -94,7 +95,6 @@ p {
 
 #title .container-fluid {
   padding: 3% 6% 6%;
-
 }
 
 /* Title Image */
