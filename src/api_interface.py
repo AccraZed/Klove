@@ -35,7 +35,7 @@ class Property:
 # Does this expect split or raw address input?(JS)
 class Address:
     def __init__(self, street_number, street_name, city, state, zip_code, lat=None, lon=None):
-        self.address_line = street_number + " " + street_name
+        self.address_line = str(street_number) + " " + street_name
         self.street_number = street_number
         self.street_name = street_name
         self.city = city
@@ -105,9 +105,9 @@ class ApiClient:
                 bike_score = ?,
                 transit_score = ?,
                 transit_summary = ?
-            WHERE street_number = ?
+            WHERE (street_number = ?
             AND zip_code = ?
-            AND city = ?
+            AND city = ?)
             """
             params = [score.walk_score, score.bike_score, score.transit_score, score.transit_summary, a_num, a_zip, a_city]
 
@@ -151,7 +151,7 @@ class ApiClient:
         LIMIT 1 
         """
 
-        params = [p.address.street_number, p.address.city, p.address.zip_code]
+        params = [int(p.address.street_number), p.address.city, int(p.address.zip_code)]
         data = db_handler.execute_read_query(self.db_con, query, params)
 
         return data

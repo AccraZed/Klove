@@ -11,14 +11,25 @@ import sys
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
 # We need to link the FrontEnd input to this constructor
-query_property = Property(Address(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]), 0, 0, 0, 0, 0, 0)
+query_property = Property(Address(int(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]), 0, 0, 0, 0, 0, 0)
 
 property_info = client.get_id(query_property)
 
-print(sys.argv)
+if len(property_info) == 0:
+    print("PROPERTY NOT FOUND")
+    client.client_http.close()
+    sys.exit(0)
+
 print(property_info)
 
 client.update_property_score(query_property)
+
+property_info = property_info[0]
+query_property.square_footage = property_info['total_sqft']
+query_property.bedrooms = property_info['num_bedrooms']
+query_property.bathrooms = property_info['num_bathrooms']
+query_property.year_built = property_info['year_built']
+query_property.list_price = property_info['list_price']
 
 # returns dict-like string of 5 properties and float of 5-value closing price avg
 similar_properties = client.get_most_similar(query_property)
