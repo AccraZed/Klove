@@ -1,4 +1,5 @@
 from haversine import haversine, Unit
+from statistics import mean
 import urllib
 import aiohttp
 import asyncio
@@ -7,16 +8,18 @@ import sqlite3
 import googlemaps
 import db_handler
 
+
+# How/Where does this class get instantiated? (JS)
 class Property:
-    def __init__(self, address, square_footage, lot_size, bedrooms, bathrooms, year_created, price, estimated_monthly_cost):
+    def __init__(self, address, square_footage, bedrooms, bathrooms, year_built, list_price, close_price):
+        self.id = None
         self.address = address
         self.square_footage = square_footage
-        self.lot_size = lot_size
         self.bedrooms = bedrooms
         self.bathrooms = bathrooms
-        self.year_created = year_created
-        self.estimated_monthly_cost = estimated_monthly_cost
-        self.price = price
+        self.year_built = year_built
+        self.list_price = list_price
+        self.close_price = close_price
         self.score = None
 
     def distance_from(self, other):
@@ -28,6 +31,7 @@ class Property:
         
         return haversine((self.address.latitude, self.address.longitude), (other.address.latitude, other.address.longitude), unit=Unit.MILES)
 
+# Does this expect split or raw address input?(JS)
 class Address:
     def __init__(self, address_line, city, state, zip_code, lat, lon):
         self.address_line = address_line
@@ -52,7 +56,7 @@ class Score:
 
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
-    base_url_google_geocode = 'https://maps.googleapis.com/maps/api/geocode/json?'
+    base_url_google_geocode = "https://maps.googleapis.com/maps/api/geocode/json?"
     
     def __init__(self, db_path="db.sqlite", k_walk_score="UNSET", k_google="UNSET"):
         self.k_walk_score = k_walk_score
@@ -60,6 +64,7 @@ class ApiClient:
         self.client_http = aiohttp.ClientSession()
         self.db_con = sqlite3.connect(db_path)
         self.db_cur = self.db_con.cursor()
+        self.db_con.row_factory = sqlite3.Row
 
     # if the current property has no geo coordinates, call the google api to find them and update
     async def update_property_coords(self, property):
@@ -92,8 +97,20 @@ class ApiClient:
             a_zip = (p.address.zip_code,)
             a_city = (p.address.city,)
 
-            # TODO: UPDATE THIS EXECUTE WITH THE SUPPORTED COMMAND FROM db_handler.py
-            db_cur.execute("UPDATE Property SET [Walk Score]=?, [Bike Score]=?, [Transit Score]=?, [Transit Summary]=?, WHERE [Street #]=? AND [Zip Code]=? AND [City]=?", (score.walk_score,), (score.bike_score,), (score.transit_score,),(score.transit_summary,), a_num, a_zip, a_city)
+            query = """
+            UPDATE property
+            SET walk_score = ?,
+                bike_score = ?,
+                transit_score = ?,
+                transit_summary = ?
+            WHERE street_number = ?
+            AND zip_code = ?
+            AND city = ?
+            """
+            params = [score.walk_score, score.bike_score, score.transit_score, score.transit_summary, a_num, a_zip, a_city]
+
+            db_handler.execute_query(self.db_con, query, params)
+
             p.score = score
     
     # requests the walk score of the current address and gets rid of the excess space
@@ -126,8 +143,38 @@ class ApiClient:
         if p.id != None:
             return p.id
 
-        # TODO: UPDATE THIS EXECUTE WITH THE SUPPORTED COMMAND FROM db_handler.py
-        self.db_cur.execute("SELECT TOP 1 [id] FROM Property WHERE [street_number]=? AND [zip_code]=? AND [city]=?", a_num, a_zip, a_city)
+        # The 'LIMIT 1' is arguably redundant considering the specificity, but ensures singular out
+        query = """
+        SELECT * FROM property
+        WHERE (street_number = ?
+        AND street_name = ?
+        AND city = ?
+        AND zip_code = ?)
+        LIMIT 1 
+        """
+
+        params = [p.a_num, p.a_zip, p.a_city]
+        self.db_handler.execute_read_query(self.db_con, query, params)
+
         return self.db_cur.fetchone()
 
 
+    def get_most_similar(self, p: Property):
+
+        query = """
+        SELECT * from property
+        WHERE (num_bedrooms = ?
+        AND num_bathrooms = ?
+        AND ABS(? - close_price) < (? * 0.1))
+        ORDER BY id ASC
+        LIMIT 5
+        """
+        params = [p.bedrooms, p.bathrooms, p.list_price, p.list_price]
+
+        id_array = db_handler.execute_read_query(self.db_con, query, params)
+
+        return id_array
+
+
+    def get_avg_close_price(self, properties: list):
+        return mean(properties[k] for k in properties)
