@@ -34,8 +34,10 @@ class Property:
 
 # Does this expect split or raw address input?(JS)
 class Address:
-    def __init__(self, address_line, city, state, zip_code, lat, lon):
-        self.address_line = address_line
+    def __init__(self, street_number, street_name, city, state, zip_code, lat=None, lon=None):
+        self.address_line = street_number + " " + street_name
+        self.street_number = street_number
+        self.street_name = street_name
         self.city = city
         self.state = state
         self.zip_code = zip_code
@@ -140,23 +142,19 @@ class ApiClient:
 
     # get the ID of the current property
     def get_id(self, p: Property):
-        if p.id != None:
-            return p.id
-
         # The 'LIMIT 1' is arguably redundant considering the specificity, but ensures singular out
         query = """
         SELECT * FROM property
         WHERE (street_number = ?
-        AND street_name = ?
         AND city = ?
         AND zip_code = ?)
         LIMIT 1 
         """
 
-        params = [p.street_number, p.street_name, p.city, p.zip_code]
-        self.db_handler.execute_read_query(self.db_con, query, params)
+        params = [p.address.street_number, p.address.city, p.address.zip_code]
+        data = db_handler.execute_read_query(self.db_con, query, params)
 
-        return self.db_cur.fetchone()
+        return data
 
 
     def get_most_similar(self, p: Property):
@@ -166,7 +164,6 @@ class ApiClient:
         WHERE (num_bedrooms = ?
         AND num_bathrooms = ?
         AND ABS(? - close_price) < (? * 0.1))
-        ORDER BY id ASC
         LIMIT 10
         """
 
@@ -188,6 +185,6 @@ class ApiClient:
                     sum += dict['close_price']
                     number_of_entries += 1
 
-        avg = sum / float(number_of_entries)
+        avg = sum / float(1 + number_of_entries)
 
         return avg

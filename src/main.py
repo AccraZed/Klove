@@ -4,14 +4,25 @@ import aiohttp
 import asyncio
 from api_interface import *
 import json
+import sys
+
+
 
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
 # We need to link the FrontEnd input to this constructor
-user_property = Property('1234 Main St.', 1500, 2, 2, 1965, 130000, 140000)
+query_property = Property(Address(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]), 0, 0, 0, 0, 0, 0)
+
+property_info = client.get_id(query_property)
+
+print(sys.argv)
+print(property_info)
+
+client.update_property_score(query_property)
 
 # returns dict-like string of 5 properties and float of 5-value closing price avg
-similar_properties = client.get_most_similar(user_property)
+similar_properties = client.get_most_similar(query_property)
+
 print(similar_properties)
 # Writes json to file for frontend
 with open('similar_properties.json', 'w') as f:
@@ -21,13 +32,13 @@ json_to_dict = json.loads(similar_properties)
 average_close_price = client.get_average_close_price(json_to_dict)
 print(average_close_price)
 
-
 # The moneyshot
-if user_property.list_price < average_close_price:
+if query_property.list_price < average_close_price:
     print("Undervalued")
 else:
     print("Overvalued")
 
+client.client_http.close()
 
 
 # Not using get_id to locate and handle user selection

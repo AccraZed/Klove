@@ -3,6 +3,7 @@ src/.env
 test.html
 db.sqlite
 src/env.py
+.vscode/*
 
 # Logs
 logs
@@ -120,3 +121,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+src/__pycache__/api_interface.cpython-39.pyc
+src/__pycache__/db_handler.cpython-39.pyc
+src/__pycache__/env.cpython-39.pyc
+similar_properties.json
