@@ -161,7 +161,7 @@ class ApiClient:
 
     def get_most_similar(self, p: Property):
 
-        query = """
+        sim_query = """
         SELECT * from property
         WHERE (num_bedrooms = ?
         AND num_bathrooms = ?
@@ -169,12 +169,17 @@ class ApiClient:
         ORDER BY id ASC
         LIMIT 5
         """
-        params = [p.bedrooms, p.bathrooms, p.list_price, p.list_price]
+        avg_query = """
+        SELECT AVG(close_price)
+        FROM ?
+        """
 
-        id_array = db_handler.execute_read_query(self.db_con, query, params)
+        # Yields list of top 5 most similar properties
+        sim_params = [p.bedrooms, p.bathrooms, p.list_price, p.list_price]
+        sim_results = db_handler.execute_read_query(self.db_con, sim_query, sim_params)
 
-        return id_array
+        # Yields the average closing price of those 5 properties
+        avg_params = [sim_results]
+        avg_results = db_handler.execute_read_query(self.db_con, avg_query, avg_params)
 
-
-    def get_avg_close_price(self, properties: list):
-        return mean(properties[k] for k in properties)
+        return sim_results, avg_results
