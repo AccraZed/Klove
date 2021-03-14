@@ -89,7 +89,12 @@ p {
 }
 
 #title .container-fluid {
+<<<<<<< HEAD
   padding: 3% 6% 6%;
+=======
+  padding: 3% 15% 7%;
+  height: 45em;
+>>>>>>> 919f038c835df7c47b1f1b4d5883123d1b8421bd
 }
 
 /* Title Image */
