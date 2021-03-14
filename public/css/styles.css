@@ -14,9 +14,8 @@ p {
 .house-image {
   left: 5%;
   float: left;
-  margin-top: 10em;
   width: 40%;
-  margin: auto;
+  margin: 5em auto;
 }
 
 /* Headings */
@@ -28,11 +27,12 @@ p {
 }
 
 .report-card {
+  position: relative;
   right: 5%;
   float: right;
   width: 40%;
-  height: 40%;
-  margin: auto;
+  height: 100%;
+  margin: 5em auto;
 }
 
 .report-card-body {

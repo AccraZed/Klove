@@ -1,26 +1,27 @@
 <%- include("header") -%>
-
-<div class="card house-image">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+<div class="report">
+  <div class="card house-image">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+    <img class="card-img-bottom" src="images/housephoto.jpeg" alt="Card image cap">
   </div>
-  <img class="card-img-bottom" src="images/housephoto.jpeg" alt="Card image cap">
-</div>
 
 
-<div class="card report-card">
-  <div class="card-header report-card-header">
-    Report Card
-  </div>
-  <div class="card-body report-card-body">
-    <p class="card-text">Address: <%= property.address %></p>
-    <p class="card-text">Price: <%= property.price %></p>
-    <p class="card-text">School rating: <%= property.school %></p>
-    <p class="card-text">Crime: <%= property.crime %></p>
-    <p class="card-text">Example: <%= property.example %></p>
-    <p class="card-text">Example: <%= property.example2 %></p>
+  <div class="card report-card">
+    <div class="card-header report-card-header">
+      Report Card
+    </div>
+    <div class="card-body report-card-body">
+      <p class="card-text">Address: <%= property.address %></p>
+      <p class="card-text">Price: <%= property.price %></p>
+      <p class="card-text">School rating: <%= property.school %></p>
+      <p class="card-text">Crime: <%= property.crime %></p>
+      <p class="card-text">Example: <%= property.example %></p>
+      <p class="card-text">Example: <%= property.example2 %></p>
+    </div>
   </div>
 </div>
 <%- include("footer") -%>
