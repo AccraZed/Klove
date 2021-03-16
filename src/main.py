@@ -1,8 +1,9 @@
+from api_client import *
+from haversine import haversine, Unit
 import db_handler
 import env
 import aiohttp
 import asyncio
-from api_client import *
 import json
 import sys
 

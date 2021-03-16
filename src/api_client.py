@@ -170,9 +170,6 @@ class ApiClient:
         else:
             return (None, None)
 
-    # def get_distance(self, ):
-    #     return haversine((self.address.latitude, self.address.longitude), (other.address.latitude, other.address.longitude), unit=Unit.MILES)
-
 
     # # if the current property has no geo coordinates, call the google api to find them and update
     # async def update_property_coords(self, property):
