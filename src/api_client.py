@@ -8,17 +8,6 @@ import json
 import sqlite3
 import googlemaps
 from db_handler import DatabaseHandler
-
-class Score:
-    def __init__(self, walk_score, walk_desc, bike_score, bike_desc, transit_score, transit_desc, transit_summary):
-        self.walk_score = walk_score
-        self.walk_desc = walk_desc
-        self.bike_score = bike_score
-        self.bike_desc = bike_desc
-        self.transit_score = transit_score
-        self.transit_desc = transit_desc
-        self.transit_summary = transit_summary
-
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
     base_url_google_geocode = "https://maps.googleapis.com/maps/api/geocode/json?"
@@ -103,36 +92,10 @@ class ApiClient:
 
         # return the dict
         return surrounding_property
-
-
-    # # request the walk score of the current property and update the database
-    # async def update_property_db(self, p: Property):
-    #     if p.score != None:
-    #         address = p.address.address_line.split()
-    #         score: Score = await self.get_score(p.address)
-
-    #         query = """
-    #         UPDATE property
-    #         SET walk_score = ?,
-    #             bike_score = ?,
-    #             transit_score = ?,
-    #             transit_summary = ?
-    #         WHERE (street_number = ?
-    #         AND zip_code = ?
-    #         AND city = ?)
-    #         """
-    #         params = [score.walk_score, score.bike_score, score.transit_score, score.transit_summary, (address.pop(0),), (p.address.zip_code,), (p.address.city,)]
-
-    #         self.db.write(self.db_con, query, params)
-
-    #         p.score = score
     
     # requests the walk score of the current address and gets rid of the excess space
-    # TODO: MAKE FUNCTION RETURN A DICT INSTEAD OF A SCORE OBJECT, FOR EASE OF USE IN JSON COMPILING
     async def get_score(self, address, lat, lon):
         """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
-
-        Returns a `Score` object
 
         Or a `None` if an error occured
         """
@@ -143,15 +106,18 @@ class ApiClient:
         try:
             result = json.loads(result.content._buffer[0])
 
-            return Score(result['walkscore'],
-                         result['description'],
-                         result['bike']['score'],
-                         result['bike']['description'],
-                         result['transit']['score'],
-                         result['transit']['description'],
-                         result['transit']['summary'])
+            return { 'score' : {
+                'walk_score': result['walkscore'], 
+                'walk_desc': result['description'],
+                'bike_score': result['bike']['score'],
+                'bike_desc': result['bike']['description'],
+                'transit_score': result['transit']['score'],
+                'transit_desc': result['transit']['description'],
+                'transit_summary': result['transit']['summary']}}
+
         except Exception as e:
             print(e)
+            return None
 
     # return the latitude and longitude of the given address
     async def get_geo_coord(self, address):

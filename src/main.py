@@ -8,7 +8,7 @@ import json
 import sys
 
 
-
+# TODO: PLAN OUT AND FIX THIS ENTIRE DOCUMENT, BACKEND IS COMPLETELY RESTRUCTURED
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
 # We need to link the FrontEnd input to this constructor
