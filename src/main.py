@@ -2,7 +2,7 @@ import db_handler
 import env
 import aiohttp
 import asyncio
-from api_interface import *
+from api_client import *
 import json
 import sys
 
