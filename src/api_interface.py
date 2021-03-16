@@ -7,7 +7,7 @@ import asyncio
 import json
 import sqlite3
 import googlemaps
-import db_handler
+from db_handler import DatabaseHandler
 
 
 # How/Where does this class get instantiated? (JS)
@@ -65,8 +65,7 @@ class ApiClient:
         self.k_walk_score = k_walk_score
         self.k_google = k_google
         self.client_http = aiohttp.ClientSession() # close this
-        self.db_con = sqlite3.connect(db_path)
-        self.db_cur = self.db_con.cursor()
+        self.db = DatabaseHandler(db_path)
 
     # if the current property has no geo coordinates, call the google api to find them and update
     async def update_property_coords(self, property):
@@ -91,13 +90,10 @@ class ApiClient:
             return (None, None)
 
     # request the walk score of the current property and update the database
-    async def update_property_score(self, p: Property):
+    async def update_property_db(self, p: Property):
         if p.score != None:
             address = p.address.address_line.split()
             score: Score = await get_score(p.address)
-            a_num = (address.pop(0),)
-            a_zip = (p.address.zip_code,)
-            a_city = (p.address.city,)
 
             query = """
             UPDATE property
@@ -109,9 +105,9 @@ class ApiClient:
             AND zip_code = ?
             AND city = ?)
             """
-            params = [score.walk_score, score.bike_score, score.transit_score, score.transit_summary, a_num, a_zip, a_city]
+            params = [score.walk_score, score.bike_score, score.transit_score, score.transit_summary, (address.pop(0),), (p.address.zip_code,), (p.address.city,)]
 
-            db_handler.execute_query(self.db_con, query, params)
+            self.db.write(self.db_con, query, params)
 
             p.score = score
     

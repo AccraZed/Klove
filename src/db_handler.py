@@ -1,64 +1,54 @@
 import sqlite3
 from sqlite3 import Error
 
+class DatabaseHandler:
+    def __init__(self, path_database):
+        try:
+            self.connection = sqlite3.connect(path_database)
+            print("Connection to SQLite DB successful")
+        except Error as e:
+            print(f"The error '{e}' occurred")
 
-#Creates connection
-def create_connection(path):
-    connection = None
-    try:
-        connection = sqlite3.connect(path)
-        print("Connection to SQLite DB successful")
-    except Error as e:
-        print(f"The error '{e}' occurred")
+    # Writes to DB, given the appropriate query
 
-    return connection
+    def write(self, query):
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            # THIS CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
+            connection.commit()
+        except Error as e:
+            print(f"The error '{e}' occurred")
 
+    def write(self, query, params):
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query, params)
+            # THIS CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
+            connection.commit() 
+        except Error as e:
+            print(f"The error '{e}' occurred")
 
-# Write Functions
+    # Reads from the DB, returning a dict of the query results
 
-# This function is for executing permanent changes to the DB, NOT retrieving data
-def execute_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit() # THIS LINE CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
-    except Error as e:
-        print(f"The error '{e}' occurred")
+    def read(self, query):
+        cursor = self.connection.cursor()
+        result = None
+        try:
+            cursor.execute(query)
+            result = [dict((cursor.description[i][0], value) \
+                for i, value in enumerate(row)) for row in cursor.fetchall()]
+            return result
+        except Error as e:
+            print(f"The error '{e}' occurred")
 
-
-# This function is for executing permanent changes to the DB, NOT retrieving data
-def execute_query(connection, query, params):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query, params)
-        connection.commit() # THIS LINE CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
-    except Error as e:
-        print(f"The error '{e}' occurred")
-
-
-# Read Functions:
-
-# This function is used for retrieving data from the DB with simple query
-def execute_read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
-    try:
-        cursor.execute(query)
-        result = [dict((cursor.description[i][0], value) \
-            for i, value in enumerate(row)) for row in cursor.fetchall()]
-        return result
-    except Error as e:
-        print(f"The error '{e}' occurred")
-
-
-# This function is used for retrieving data from the DB with parametrized query set
-def execute_read_query(connection, query, params):
-    cursor = connection.cursor()
-    result = None
-    try:
-        cursor.execute(query, params)
-        result = [dict((cursor.description[i][0], value) \
-            for i, value in enumerate(row)) for row in cursor.fetchall()]
-        return result
-    except Error as e:
-        print(f"The error '{e}' occurred")
+    def read(self, query, params):
+        cursor = self.connection.cursor()
+        result = None
+        try:
+            cursor.execute(query, params)
+            result = [dict((cursor.description[i][0], value) \
+                for i, value in enumerate(row)) for row in cursor.fetchall()]
+            return result
+        except Error as e:
+            print(f"The error '{e}' occurred")
