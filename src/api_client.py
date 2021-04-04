@@ -188,8 +188,4 @@ class ApiClient:
 
         avg = sum / float(1 + number_of_entries)
 
-<<<<<<< HEAD
-    
-=======
         return avg
->>>>>>> b109a73e54ffa49aa099416602f818fbf63d5236
