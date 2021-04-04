@@ -8,6 +8,7 @@ import json
 import sqlite3
 import googlemaps
 from db_handler import DatabaseHandler
+
 class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
     base_url_google_geocode = "https://maps.googleapis.com/maps/api/geocode/json?"
@@ -15,11 +16,9 @@ class ApiClient:
     def __init__(self, db_path="db.sqlite", k_walk_score="UNSET", k_google="UNSET"):
         self.k_walk_score = k_walk_score
         self.k_google = k_google
-        self.client_realtor = None #TODO: UPDATE CLIENT ONCE WE GET ACCESS TO DB
         self.client_http = aiohttp.ClientSession() # close this
         self.db = DatabaseHandler(db_path)
 
-    # TODO: UPDATE DEF ONCE WE KNOW THE SPECIFICS - THIS IS IN ESSENSE A MORE WRITTEN PSEUDOCODE
     async def search_properties(self, address: str, radius: float):
         # Find property info of address
         query = ""
