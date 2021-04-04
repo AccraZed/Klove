@@ -20,16 +20,26 @@ class ApiClient:
         self.client_http = aiohttp.ClientSession()  # close this
         self.db = DatabaseHandler(db_path)
 
-    async def search_properties(self, query_property, query, params, radius: float):
+    async def search_properties(self, query_id, query, params, radius: float):
+        
+        query = """
+        SELECT * FROM property
+        WHERE id = ?
+        LIMIT 1"""
+
+        params = query_id
+
+        query_property = self.db.read(query, params)
+        
         # Find all surrounding properties as dict
         surrounding_property = self.db.read(query, params)
-        self.update_property_coords(query_property['id'])
-        self.update_property_score(query_property['id'])
+        self.update_property_coords(query_id)
+        self.update_property_score(query_id)
 
         # go through each entry in dict,
         for property in surrounding_property:
             self.update_property_coords(property['id'])
-            self.update_property_score(query_property['id'])
+            self.update_property_score(property['id'])
 
             params = {'id': property['id']}
 
