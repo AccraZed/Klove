@@ -12,9 +12,10 @@ import sys
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
 # We need to link the FrontEnd input to this constructor
-query_property = Property(Address(int(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]), 0, 0, 0, 0, 0, 0)
 
-property_info = client.get_id(query_property)
+query_property = [int(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]]
+
+property_info = client.search_properties(query_property)
 
 if len(property_info) == 0:
     print("PROPERTY NOT FOUND")

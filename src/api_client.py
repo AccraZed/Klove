@@ -18,7 +18,8 @@ class ApiClient:
         self.k_google = k_google
         self.client_http = aiohttp.ClientSession() # close this
         self.db = DatabaseHandler(db_path)
-
+    
+    # Address is list: [houseNumber, streetName, city, state, zip]
     async def search_properties(self, address: str, radius: float):
         # Find property info of address
         query = ""
