@@ -42,7 +42,7 @@ app.post("/search", function (req, res) {
   const streetName = req.body.streetName;
   const city = req.body.city;
   const state = req.body.state;
-  const zip = req.body.zip;
+  const zip = req.body.zip; 
   property.address = houseNumber + " " + streetName;
 
   const python = spawn('python', ['src/main.py', houseNumber, streetName, city, state, zip]);

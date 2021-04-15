@@ -40,3 +40,7 @@ class DatabaseHandler:
 
         except Error as e:
             print(f"The error '{e}' occurred")
+
+# for speeding up alterations to the table (Justice)
+# db_path = "src/db.sqlite"
+# db = DatabaseHandler(db_path)

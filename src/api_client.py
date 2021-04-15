@@ -24,9 +24,10 @@ class ApiClient:
     async def search_properties(self, query_id, query, params, radius: float):
 
         query = """
-        SELECT * FROM property
-        WHERE id = ?
-        LIMIT 1"""
+                SELECT * FROM property
+                WHERE id = ?
+                LIMIT 1
+                """
 
         params = query_id
 
@@ -97,9 +98,10 @@ class ApiClient:
     # if the current property has no walk/bike/transit scores, call the walkScore api to find them and update
     async def update_property_score(self, id, force=False):
         query = """
-        SELECT * FROM property
-        WHERE id = ?
-        LIMIT 1"""
+                SELECT * FROM property
+                WHERE id = ?
+                LIMIT 1
+                """
 
         params = id
 
@@ -108,16 +110,21 @@ class ApiClient:
         try:
             if not force and response['lat'] != None and response['lon'] != None:
                 return
+        
+        # catch? not sure what force is doing so hard for me to predict the error
+        except sqlite3.Error as e:
+            print(e)
 
-        score = self.get_score(property['address'])
+        score = self.get_score(response['address'], response['latitude'], response['longitude'])
 
         query = """
-        UPDATE property
-                walk_score = ?,
-                bike_score = ?,
-                transit_score = ?,
-                transit_summary = ?
-        WHERE id = ?"""
+                UPDATE property
+                SET walk_score = ?,
+                    bike_score = ?,
+                    transit_score = ?,
+                    transit_summary = ?
+                WHERE id = ?
+                """
 
         params = {
             score['walk_score'],
@@ -132,9 +139,10 @@ class ApiClient:
     # if the current property has no geo coordinates, call the google api to find them and update
     async def update_property_coords(self, id, force=False):
         query = """
-        SELECT * FROM property
-        WHERE id = ?
-        LIMIT 1"""
+                SELECT * FROM property
+                WHERE id = ?
+                """
+                # keeping LIMIT 1 after expecting a match on ID will mask duplicates, which need correcting
 
         params = id
 
@@ -144,36 +152,38 @@ class ApiClient:
             if not force and response['walk_score'] != None:
                 return
 
-        response['lat'], response['lon'] = self.get_geo_coord(
-            property['address'])
+        # generic. if different/specific, change (didn't know what else to expect)
+        except sqlite3.Error as e: 
+            print(e)
+
+        response['latitude'], response['longitude'] = self.get_geo_coord(response['address'])
 
         query = """
-        UPDATE property
-                lat = ?,
-                lon = ?)
-        WHERE id = ?"""
+                UPDATE property
+                SET   (latitude = ?,
+                       longitude = ?)
+                WHERE  id = ?
+                """
 
-        params = {response['lat'], response['lon'], id}
+        params = {response['latitude'], response['longitude'], response['id']}
 
         self.db.write(query, params)
 
-    def get_most_similar(self, p: Property):
+    def get_most_similar(self, house):
 
-        sim_query = """
-        SELECT * from property
-        WHERE (num_bedrooms = ?
-        AND num_bathrooms = ?
-        AND ABS(? - close_price) < (? * 0.1))
-        LIMIT 10
-        """
+        query = """
+                SELECT * from property
+                WHERE (num_bedrooms = ?
+                AND num_bathrooms = ?
+                AND ABS(? - close_price) < (? * 0.1))
+                LIMIT 10
+                """
 
         # Yields list of top most similar properties
-        sim_params = [p.bedrooms, p.bathrooms, p.list_price, p.list_price]
-        sim_results = db_handler.execute_read_query(
-            self.db_con, sim_query, sim_params)
-        json_output = json.dumps(sim_results)
+        params = [house['num_bedrooms'], house['num_bathrooms'], house['list_price'], house['list_price']]
+        response = self.db.read(query, params)
 
-        return json_output
+        return response
 
     # Simplified, mechanical averaging of dict values
     def get_average_close_price(self, dataList):

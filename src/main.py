@@ -11,10 +11,13 @@ import sys
 # TODO: PLAN OUT AND FIX THIS ENTIRE DOCUMENT, BACKEND IS COMPLETELY RESTRUCTURED
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
+test_house = ["953", "Cherokee", "Palm Bay", "FL", "32909"]
+
 # We need to link the FrontEnd input to this constructor
-# houseNumber, streetName, city, state, zip
+# street_number, street_name, city, state, zip_code
 query_property = sys.argv[1:6]
-query_property[0] = int(query_property[0])  # houseNumber
+query_property[0] = int(query_property[0])  # street_number
+query_property[4] = int(query_property[4])  # zip_code
 
 property_info = client.search_properties(query_property)
 
