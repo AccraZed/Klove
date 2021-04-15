@@ -45,20 +45,20 @@ class ApiClient:
 
             params = {'id': property['id']}
 
-            if haversine.haversine((query_property['lat'], query_property['lon']), (property['lat'], [property['lon']]), unit=Unit.MILES) > radius:
+            if haversine.haversine((query_property['latitude'], query_property['longitude']), (property['latitude'], [property['longitude']]), unit=Unit.MILES) > radius:
                 surrounding_property.remove(property)
 
         # return the dict
         return surrounding_property
 
     # requests the walk score of the current address and gets rid of the excess space
-    async def get_score(self, address, lat, lon):
+    async def get_score(self, address, latitude, longitude):
         """
         Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
         Or a `None` if an error occurred
         """
         params = {'format': 'json', 'transit': '1', 'bike': '1',
-                  'wsapikey': self.k_walk_score, 'lat': lat, 'lon': lon, 'address': address}
+                  'wsapikey': self.k_walk_score, 'latitude': latitude, 'longitude': longitude, 'address': address}
         query = ApiClient.base_url_walk_score
 
         result = await self.client_http.get(query, params=params)
@@ -91,7 +91,7 @@ class ApiClient:
         if data['status'] == 'OK':
             result = data['results'][0]
             location = result['geometry']['location']
-            return (location['lat'], location['lng'])
+            return (location['latitude'], location['lng'])
         else:
             return (None, None)
 
@@ -108,7 +108,7 @@ class ApiClient:
         response = self.db.read(query, params)
 
         try:
-            if not force and response['lat'] != None and response['lon'] != None:
+            if not force and response['latitude'] != None and response['longitude'] != None:
                 return
         
         # catch? not sure what force is doing so hard for me to predict the error
