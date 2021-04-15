@@ -12,8 +12,9 @@ import sys
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
 # We need to link the FrontEnd input to this constructor
-
-query_property = [int(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]]
+# houseNumber, streetName, city, state, zip
+query_property = sys.argv[1:6]
+query_property[0] = int(query_property[0])  # houseNumber
 
 property_info = client.search_properties(query_property)
 
@@ -55,16 +56,16 @@ client.client_http.close()
 
 
 # Not using get_id to locate and handle user selection
-# Both printing statements(ln13 of main.py(LIST) and ln182 of 
+# Both printing statements(ln13 of main.py(LIST) and ln182 of
 #     api_interface.py(DICT)) are not printing any values
 # Further abstraction is possible an might improve clarity
 # The mechanisms for receipt and transfer of property information
 #     are in place and only need genuine 'connections' from both
 #     ends.
-# I believe that the 'avg_query' syntax is wrong. The intent is 
-#     to average the close_price values listed in the subset 
+# I believe that the 'avg_query' syntax is wrong. The intent is
+#     to average the close_price values listed in the subset
 #     in sim_results(5-properties)
-# Inherent biases exists in our data pool because we are 
+# Inherent biases exists in our data pool because we are
 #     narrowly selecting a range of data against which we
 #     compare listing price. Additionally, by using LIMIT,
 #     we are choosing from a heavily-skewed small range.

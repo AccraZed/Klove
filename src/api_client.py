@@ -14,14 +14,15 @@ class ApiClient:
     base_url_walk_score = "https://api.walkscore.com/score?"
     base_url_google_geocode = "https://maps.googleapis.com/maps/api/geocode/json?"
 
-    def __init__(self, db_path="db.sqlite", k_walk_score="UNSET", k_google="UNSET"):
+    def __init__(self, db_path="src/db.sqlite", k_walk_score="UNSET", k_google="UNSET"):
         self.k_walk_score = k_walk_score
         self.k_google = k_google
         self.client_http = aiohttp.ClientSession()  # close this
         self.db = DatabaseHandler(db_path)
 
+    # query: [houseNumber, streetName, city, state, zip]
     async def search_properties(self, query_id, query, params, radius: float):
-        
+
         query = """
         SELECT * FROM property
         WHERE id = ?
@@ -30,7 +31,7 @@ class ApiClient:
         params = query_id
 
         query_property = self.db.read(query, params)
-        
+
         # Find all surrounding properties as dict
         surrounding_property = self.db.read(query, params)
         self.update_property_coords(query_id)
@@ -51,9 +52,9 @@ class ApiClient:
 
     # requests the walk score of the current address and gets rid of the excess space
     async def get_score(self, address, lat, lon):
-        """Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
-
-        Or a `None` if an error occured
+        """
+        Returns a dictionary of the walk, bike, and transit scores + descriptions, if available.
+        Or a `None` if an error occurred
         """
         params = {'format': 'json', 'transit': '1', 'bike': '1',
                   'wsapikey': self.k_walk_score, 'lat': lat, 'lon': lon, 'address': address}
@@ -93,8 +94,7 @@ class ApiClient:
         else:
             return (None, None)
 
-    # if the current property has no geo coordinates, call the google api to find them and update
-
+    # if the current property has no walk/bike/transit scores, call the walkScore api to find them and update
     async def update_property_score(self, id, force=False):
         query = """
         SELECT * FROM property

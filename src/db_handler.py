@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 
+# Python doesn't support function overloading(later function takes precedence)
+
 class DatabaseHandler:
     def __init__(self, path_database):
         try:
@@ -10,45 +12,31 @@ class DatabaseHandler:
             print(f"The error '{e}' occurred")
 
     # Writes to DB, given the appropriate query
-
-    def write(self, query):
+    def write(self, query, params=None):
         cursor = self.connection.cursor()
         try:
-            cursor.execute(query)
+            if params is not None:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+
             # THIS CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
-            connection.commit()
+            self.connection.commit()
         except Error as e:
             print(f"The error '{e}' occurred")
 
-    def write(self, query, params):
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute(query, params)
-            # THIS CHANGES THE CONTENTS OF THE DB! USE WITH CAUTION
-            connection.commit() 
-        except Error as e:
-            print(f"The error '{e}' occurred")
-
-    # Reads from the DB, returning a dict of the query results
-
-    def read(self, query):
+    def read(self, query, params=None):
         cursor = self.connection.cursor()
         result = None
         try:
-            cursor.execute(query)
-            result = [dict((cursor.description[i][0], value) \
-                for i, value in enumerate(row)) for row in cursor.fetchall()]
-            return result
-        except Error as e:
-            print(f"The error '{e}' occurred")
+            if params is not None:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
 
-    def read(self, query, params):
-        cursor = self.connection.cursor()
-        result = None
-        try:
-            cursor.execute(query, params)
-            result = [dict((cursor.description[i][0], value) \
-                for i, value in enumerate(row)) for row in cursor.fetchall()]
+            result = [dict((cursor.description[i][0], value)
+                           for i, value in enumerate(row)) for row in cursor.fetchall()]
             return result
+
         except Error as e:
             print(f"The error '{e}' occurred")
