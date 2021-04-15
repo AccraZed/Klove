@@ -11,7 +11,7 @@ import sys
 # TODO: PLAN OUT AND FIX THIS ENTIRE DOCUMENT, BACKEND IS COMPLETELY RESTRUCTURED
 client = ApiClient("src/db.sqlite", env.KEY_WALK_SCORE, env.KEY_GOOGLE_GEO)
 
-test_house = ["953", "Cherokee", "Palm Bay", "FL", "32909"]
+# test_house = [953, "Cherokee", "Palm Bay", "FL", 32909]
 
 # We need to link the FrontEnd input to this constructor
 # street_number, street_name, city, state, zip_code
@@ -59,8 +59,6 @@ client.client_http.close()
 
 
 # Not using get_id to locate and handle user selection
-# Both printing statements(ln13 of main.py(LIST) and ln182 of
-#     api_interface.py(DICT)) are not printing any values
 # Further abstraction is possible an might improve clarity
 # The mechanisms for receipt and transfer of property information
 #     are in place and only need genuine 'connections' from both
